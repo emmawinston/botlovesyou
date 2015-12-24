@@ -102,7 +102,7 @@ for status in reverse_mentions:
 	m = ("@%s " + pick_heart(atheart)) % (sn)
 	print(m)
 	the_twitter_api.update_status(m, status.id)
-	last_status_ud = str(status_id)
+	last_status_id = str(status_id)
 
 if last_status_id:
 	the_twitter_api.send_direct_message(the_twitter_api.me().screen_name, last_status_id)

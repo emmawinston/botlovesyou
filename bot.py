@@ -13,11 +13,14 @@ from random import randrange
 
 ## Authentication Boilerplate
 
-# Be sure to paste your keys and tokens in here because it won't work otherwise!
-CONSUMER_KEY = ""
-CONSUMER_SECRET = ""
-ACCESS_KEY = ""
-ACCESS_SECRET = ""
+# Pass in these tokens using environment variables
+# set them on the heroku app with: heroku config:set NAME="value"
+# or pass them in with the command line: $ NAME="value" python file.py
+
+CONSUMER_KEY = os.environ['CONSUMER_KEY']
+CONSUMER_SECRET = os.environ['CONSUMER_SECRET']
+ACCESS_KEY = os.environ['ACCESS_KEY']
+ACCESS_SECRET = os.environ['ACCESS_SECRET']
 
 
 # Send our keys and tokens to Twitter
@@ -27,109 +30,81 @@ credentials.set_access_token(ACCESS_KEY, ACCESS_SECRET)
 # Authenticate with Twitter to get access
 the_twitter_api = tweepy.API(credentials)
 
-MYDIR = os.path.dirname(__file__)
-fp = open(os.path.join(MYDIR, "lastid.py"), 'r')  
-last_id_replied = fp.read()
-fp.close()
+last_status_dm = the_twitter_api.sent_direct_messages(count=1)
+
+if last_status_dm:
+	last_id_replied = last_status_dm[0].text
+else:
+	last_id_replied = None
 
 # choose a heart
-heart = randrange(0,150)
-if heart == 0:
-	heartprint = '♡'
-if heart == 1:
-	heartprint = '♥'  
-if heart == 2:
-	heartprint = '❤'
-if heart == 3:
-	heartprint = '❦'
-if heart == 4:
-	heartprint = '💓'
-if heart == 5:
-	heartprint = '💕'
-if heart == 6:
-	heartprint = '💖'
-if heart == 7:
-	heartprint = '💗'
-if heart == 8:
-	heartprint = '💘'
-if heart == 9:
-	heartprint = '💙'
-if heart == 10:
-	heartprint = '💚'
-if heart == 11:
-	heartprint = '💛'
-if heart == 12:
-	heartprint = '💜'
-if heart == 13:
-	heartprint = '💝'
-if heart == 14:
-	heartprint = '💞'
-if heart == 15:
-	heartprint = '💟'
+def pick_heart(heart):
+	heartprint = ''
+
+	if heart == 0:
+	    heartprint = '♡'
+	if heart == 1:
+	    heartprint = '♥'
+	if heart == 2:
+	    heartprint = '❤'
+	if heart == 3:
+	    heartprint = '❦'
+	if heart == 4:
+	    heartprint = '💓'
+	if heart == 5:
+	    heartprint = '💕'
+	if heart == 6:
+	    heartprint = '💖'
+	if heart == 7:
+	    heartprint = '💗'
+	if heart == 8:
+	    heartprint = '💘'
+	if heart == 9:
+	    heartprint = '💙'
+	if heart == 10:
+	    heartprint = '💚'
+	if heart == 11:
+	    heartprint = '💛'
+	if heart == 12:
+	    heartprint = '💜'
+	if heart == 13:
+	    heartprint = '💝'
+	if heart == 14:
+	    heartprint = '💞'
+	if heart == 15:
+	    heartprint = '💟'
+	return heartprint
+
+
+heart = randrange(0,15)
 
 if heart > 15:
 	print('no heart this time')  
 else:
-# print out the heart
-	something = heartprint
+	# print out the heart
+	something = pick_heart(heart)
 	the_twitter_api.update_status(status=something)
 	print('done!')
 
-## Put the code that defines the bot's behavior below
-
-## something = "Text to be automatically tweeted."
-
-# Tweet something 
-# Note: this design means the bot quits after tweeting instead of running continuously
-#the_twitter_api.update_status(status=something)
-
-"""query = '@botlovesyou'
+query = '@botlovesyou'
 max_tweets = 20
 recent_mentions = [status for status in tweepy.Cursor(the_twitter_api.mentions_timeline, q=query, since_id=last_id_replied).items(max_tweets)]
 reverse_mentions = reversed(recent_mentions)
 
 print(reverse_mentions)
 
+last_status_id = None
+
 for status in reverse_mentions:
   # choose a heart
-    atheart = randrange(0,15)
-    if atheart == 0:
-      atheartprint = '♡'
-    if atheart == 1:
-      atheartprint = '♥'  
-    if atheart == 2:
-      atheartprint = '❤'
-    if atheart == 3:
-      atheartprint = '❦'
-    if atheart == 4:
-      atheartprint = '💓'
-    if atheart == 5:
-      atheartprint = '💕'
-    if atheart == 6:
-      atheartprint = '💖'
-    if atheart == 7:
-      atheartprint = '💗'
-    if atheart == 8:
-      atheartprint = '💘'
-    if atheart == 9:
-      atheartprint = '💙'
-    if atheart == 10:
-      atheartprint = '💚'
-    if atheart == 11:
-      atheartprint = '💛'
-    if atheart == 12:
-      atheartprint = '💜'
-    if atheart == 13:
-      atheartprint = '💝'
-    if atheart == 14:
-      atheartprint = '💞'
-    if atheart == 15:
-      atheartprint = '💟'
-    sn = status.user.screen_name
-    m = ("@%s " + atheartprint) % (sn)
-    print(m)
-    the_twitter_api.update_status(m, status.id)
-    fp = open(os.path.join(MYDIR, "lastid.py"), 'w')
-    fp.write(str(status.id))
-    fp.close()
-    print("done messaging people")"""
+	atheart = randrange(0,15)
+	sn = status.user.screen_name
+	m = ("@%s " + pick_heart(atheart)) % (sn)
+	print(m)
+	the_twitter_api.update_status(m, status.id)
+	last_status_ud = str(status_id)
+
+if last_status_id:
+	the_twitter_api.send_direct_message(the_twitter_api.me().screen_name, last_status_id)
+
+print("done messaging people")
